@@ -1,17 +1,47 @@
-# flutter_bookbee
+# 📚 BookBee
 
-A new Flutter project.
+BookBee is a Flutter application that helps users discover books using the Google Books API.
+
+## Features
+
+- 🔍 Search books by title
+- 📖 View book details
+- ⭐ See ratings and page count
+- 🏷️ View book categories
+- 🎨 Clean and simple UI
+
+## Tech Stack
+
+- Flutter
+- Dart
+- Google Books API
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+1. Clone the repository.
+2. Create a `.env` file in the project root.
+3. Add your Google Books API key:
 
-A few resources to get you started if this is your first Flutter project:
+```env
+GOOGLE_BOOKS_API_KEY=YOUR_API_KEY
+```
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+4. Install dependencies:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+flutter pub get
+```
+
+5. Run the app:
+
+```bash
+flutter run
+```
+
+## Note
+
+This project uses `flutter_dotenv` to securely manage the API key. The `.env` file is not included in this repository.
+
+## Author
+
+Ashutosh Tiwari
