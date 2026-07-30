@@ -76,7 +76,12 @@ class _SearchScreenState extends State<SearchScreen> {
         ],
       ),
       trailing: Icon(icons),
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => SearchResultScreen(query: genre)),
+        );
+      },
       title: Text(
         genre,
         style: TextStyle(

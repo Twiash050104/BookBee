@@ -46,6 +46,7 @@ class _SearchResultState extends State<SearchResultScreen> {
             !title.contains("facts") &&
             !title.contains("fan") &&
             !title.contains("guide") &&
+            !title.contains("movies") &&
             !title.contains("pedia") &&
             !title.contains("study guide") &&
             !title.contains("summary") &&
@@ -85,18 +86,6 @@ class _SearchResultState extends State<SearchResultScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   automaticallyImplyLeading: true,
-      //   title: TextFormField(
-      //     controller: searchController,
-      //     onFieldSubmitted: searchBooks,
-      //     decoration: const InputDecoration(
-      //       hintText: "Search books...",
-      //       border: InputBorder.none,
-      //       prefixIcon: Icon(Icons.search_rounded),
-      //     ),
-      //   ),
-      // ),
       body: SafeArea(
         bottom: false,
         child: Column(

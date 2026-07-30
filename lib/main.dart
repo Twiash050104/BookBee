@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bookbee/auth/login_screen.dart';
 import 'Navigation/navigation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+//import 'auth/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(scaffoldBackgroundColor: const Color(0xFFFFFBEC)),
       debugShowCheckedModeBanner: false,
-      home: NavigationScreen(),
+      home: LoginScreen(),
     );
   }
 }
