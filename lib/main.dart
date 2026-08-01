@@ -3,7 +3,9 @@ import 'package:flutter_bookbee/auth/login_screen.dart';
 import 'Navigation/navigation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-//import 'auth/login_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'auth/auth_wrapper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +20,8 @@ void main() async {
   );
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -27,9 +31,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(scaffoldBackgroundColor: const Color(0xFFFFFBEC)),
+      theme: ThemeData(
+        scaffoldBackgroundColor: const Color(0xFFFFFBEC),
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Colors.black54,
+          selectionColor: Colors.orange.shade200,
+          selectionHandleColor: Colors.orange,
+        ),
+      ),
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: const AuthWrapper(),
     );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bookbee/models/user_model.dart';
+import 'package:flutter_bookbee/Services/user_services.dart';
 
 class ShelfChips extends StatefulWidget {
   const ShelfChips({super.key});
@@ -8,8 +10,24 @@ class ShelfChips extends StatefulWidget {
 }
 
 class _ProfileChipsState extends State<ShelfChips> {
+  UserModel? user;
   int selectedindex = 0;
   //bool onSelected = false;
+
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
+  }
+
+  Future<void> loadUser() async {
+    final currentUser = await UserService().getCurrentUser();
+
+    setState(() {
+      user = currentUser;
+    });
+  }
+
   Widget profilechips(
     String name,
     //Color textcolor,
@@ -52,37 +70,41 @@ class _ProfileChipsState extends State<ShelfChips> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 8),
-      child: Column(
-        children: [
-          RichText(
-            text: TextSpan(
-              style: TextStyle(fontSize: 28, color: Colors.black),
+    if (user == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 8),
+        child: Column(
+          children: [
+            RichText(
+              text: TextSpan(
+                style: TextStyle(fontSize: 28, color: Colors.black),
+                children: [
+                  //add username value here
+                  TextSpan(
+                    text:
+                        "$user"
+                        's',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(text: ' Shelf'),
+                ],
+              ),
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                //add username value here
-                TextSpan(
-                  text:
-                      'username'
-                      "'"
-                      's',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                TextSpan(text: ' Shelf'),
+                profilechips('Reading', 0),
+                profilechips('Completed', 1),
+                profilechips('To Read', 2),
+                profilechips('Dropped', 3),
               ],
             ),
-          ),
-          SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              profilechips('Reading', 0),
-              profilechips('Completed', 1),
-              profilechips('To Read', 2),
-              profilechips('Dropped', 3),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -1,4 +1,4 @@
-package com.example.flutter_bookbee
+package com.bookbee.application
 
 import io.flutter.embedding.android.FlutterActivity
 

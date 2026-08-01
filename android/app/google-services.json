@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "371102131768",
+    "project_id": "bookbee-7a153",
+    "storage_bucket": "bookbee-7a153.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:371102131768:android:6b8d3d39fa9262a8c8e8cd",
+        "android_client_info": {
+          "package_name": "com.bookbee.application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDU9VftAguc2QzGlc1RzadnJ1MVbNfeTo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
