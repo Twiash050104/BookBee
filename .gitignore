@@ -33,7 +33,6 @@ migrate_working_dir/
 /build/
 /coverage/
 .env
-C:\Users\Ashutosh Tiwari\Documents\FlutterProj\bookbee\lib\firebase_options.dart
 
 # Symbolication related
 app.*.symbols
