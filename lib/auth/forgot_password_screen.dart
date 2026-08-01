@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bookbee/Widgets/glassback_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgotpasswordScreen extends StatefulWidget {
   const ForgotpasswordScreen({super.key});
@@ -9,6 +10,8 @@ class ForgotpasswordScreen extends StatefulWidget {
 
 class _ForgotpasswordScreenState extends State<ForgotpasswordScreen> {
   final TextEditingController email = TextEditingController();
+
+  bool isLoading = false;
 
   final _formkey = GlobalKey<FormState>();
 
@@ -131,13 +134,100 @@ class _ForgotpasswordScreenState extends State<ForgotpasswordScreen> {
                           padding: EdgeInsets.zero,
                           backgroundColor: Color(0xFFFE9A34),
                         ),
-                        onPressed: () {
-                          if (_formkey.currentState!.validate()) {}
-                        },
-                        child: Text(
-                          'Send Reset Link',
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
+                        onPressed: isLoading
+                            ? null
+                            : () async {
+                                if (_formkey.currentState!.validate()) {
+                                  try {
+                                    await FirebaseAuth.instance
+                                        .sendPasswordResetEmail(
+                                          email: email.text.trim(),
+                                        );
+
+                                    if (!mounted) return;
+
+                                    await showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: const Text(
+                                            "Email Sent",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          content: Text(
+                                            "If an account with this email exists, a password reset link has been sent. "
+                                            "Please check your inbox and spam folder.",
+                                            style: TextStyle(),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(
+                                                  context,
+                                                ); // Close dialog
+                                                Navigator.pop(
+                                                  context,
+                                                ); // Go back to Login
+                                              },
+                                              child: const Text(
+                                                "OK",
+                                                style: TextStyle(
+                                                  color: Color(0xFFFE9A34),
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  } on FirebaseAuthException catch (e) {
+                                    String message;
+
+                                    switch (e.code) {
+                                      case 'user-not-found':
+                                        message =
+                                            'No account found with this email.';
+                                        break;
+
+                                      case 'invalid-email':
+                                        message = 'Please enter a valid email.';
+                                        break;
+
+                                      default:
+                                        message =
+                                            'Something went wrong. Please try again.';
+                                    }
+
+                                    if (!mounted) return;
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(message)),
+                                    );
+                                  }
+                                }
+                              },
+                        child: isLoading
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Text(
+                                'Send Reset Link',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
+                              ),
                       ),
                     ],
                   ),
