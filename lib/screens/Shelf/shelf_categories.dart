@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bookbee/Widgets/stretch_physics.dart';
 import 'package:flutter_bookbee/screens/BookDetail/book_details.dart';
-//import 'package:flutter_bookbee/Motion/stretch_physics.dart';
+import 'package:flutter_bookbee/models/book.dart';
+import 'package:flutter_bookbee/services/bookshelf_services.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ShelfCategories extends StatefulWidget {
-  //final String image;
-  const ShelfCategories({super.key});
+  final String status;
+  const ShelfCategories({super.key, required this.status});
 
   @override
   State<ShelfCategories> createState() => _ShelfCategoriesState();
 }
 
 class _ShelfCategoriesState extends State<ShelfCategories> {
-  Widget _shelfCard(
-    String title,
-    String author,
-    String subtitle,
-    String image,
-  ) {
+  final BookshelfServices _bookshelfServices = BookshelfServices();
+
+  Widget _shelfCard(Book book) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: InkWell(
@@ -25,11 +25,13 @@ class _ShelfCategoriesState extends State<ShelfCategories> {
             context,
             MaterialPageRoute(
               builder: (context) => BookDetailsScreen(
-                title: title,
-                author: author,
-                image: image,
-                subtitle: subtitle,
-                genres: [],
+                title: book.title,
+                author: book.author,
+                //image: book.coverUrl,
+                isbn: book.isbn,
+                subtitle: book.description,
+                thumbnail: book.thumbnail,
+                genres: book.genres,
               ),
             ),
           );
@@ -60,11 +62,35 @@ class _ShelfCategoriesState extends State<ShelfCategories> {
                   width: 90,
                   height: 140,
                   color: Colors.grey.shade300,
-                  child: Image.asset(
-                    image,
-                    height: MediaQuery.of(context).size.height * 0.5,
-                    width: double.infinity,
+                  child: CachedNetworkImage(
+                    imageUrl: book.coverUrl,
                     fit: BoxFit.cover,
+                    height: double.infinity,
+                    width: double.infinity,
+
+                    placeholder: (context, url) =>
+                        Container(color: Colors.grey.shade500),
+
+                    errorWidget: (context, url, error) {
+                      return CachedNetworkImage(
+                        imageUrl: book.thumbnail,
+                        fit: BoxFit.cover,
+                        height: double.infinity,
+                        width: double.infinity,
+
+                        placeholder: (context, url) =>
+                            Container(color: Colors.grey.shade500),
+
+                        errorWidget: (context, url, error) {
+                          return Container(
+                            color: Colors.grey.shade300,
+                            child: const Center(
+                              child: Icon(Icons.menu_book, size: 40),
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
                 ),
               ),
@@ -78,14 +104,19 @@ class _ShelfCategoriesState extends State<ShelfCategories> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        book.title,
                         style: const TextStyle(
-                          fontSize: 22,
+                          fontSize: 20,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      SizedBox(height: 2),
+                      Spacer(),
+                      //SizedBox(height: 8),
                       RichText(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         text: TextSpan(
                           style: DefaultTextStyle.of(context).style.copyWith(
                             fontSize: 16,
@@ -97,7 +128,7 @@ class _ShelfCategoriesState extends State<ShelfCategories> {
                               style: TextStyle(fontStyle: FontStyle.italic),
                             ),
                             TextSpan(
-                              text: author,
+                              text: book.author,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontStyle: FontStyle.italic,
@@ -107,19 +138,19 @@ class _ShelfCategoriesState extends State<ShelfCategories> {
                         ),
                       ),
 
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 6),
 
-                      Expanded(
-                        child: Text(
-                          subtitle,
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.grey.shade700,
-                            height: 1.4,
-                          ),
-                        ),
-                      ),
+                      // Expanded(
+                      //   child: Text(
+                      //     book.description,
+                      //     maxLines: 3,
+                      //     overflow: TextOverflow.ellipsis,
+                      //     style: TextStyle(
+                      //       color: Colors.grey.shade700,
+                      //       height: 1.4,
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -133,53 +164,42 @@ class _ShelfCategoriesState extends State<ShelfCategories> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      //physics: Mycustomphysics(),
-      child: Column(
-        children: [
-          _shelfCard(
-            "Harry Potter",
-            "J.K. Rowling",
-            "A young wizard discovers his magical destiny and faces the dark wizard who killed his parents.",
-            "assets/images/harrypotter.jpg",
-          ),
+    return StreamBuilder<List<Book>>(
+      stream: _bookshelfServices.getBooks(widget.status),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-          _shelfCard(
-            "The Hobbit",
-            "J.R.R. Tolkien",
-            "Bilbo Baggins embarks on an unexpected adventure with thirteen dwarves to reclaim their homeland.",
-            "assets/images/thehobbit.jpg",
-          ),
+        if (snapshot.hasError) {
+          return Center(child: Text(snapshot.error.toString()));
+        }
 
-          _shelfCard(
-            "The Alchemist",
-            "Paulo Coelho",
-            "A shepherd named Santiago travels across the desert in search of his personal legend.",
-            "assets/images/thealchemist.jpg",
-          ),
+        if (!snapshot.hasData) {
+          return const Center(child: Text("No data"));
+        }
 
-          _shelfCard(
-            "The Lord of the Rings",
-            "J.R.R. Tolkien",
-            "Frodo Baggins embarks on a perilous quest to destroy the One Ring and save Middle-earth from the Dark Lord Sauron.",
-            "assets/images/lotr.jpg",
-          ),
+        print(snapshot.connectionState);
 
-          _shelfCard(
-            "The Silent Patient",
-            "Alex Michaelides",
-            "A renowned painter stops speaking after a shocking act of violence, leaving a psychotherapist determined to uncover the truth.",
-            "assets/images/thesilentpatient.jpg",
-          ),
+        final books = snapshot.data!;
 
-          _shelfCard(
-            "Dune",
-            "Frank Herbert",
-            "Paul Atreides journeys to the desert planet Arrakis, where politics, prophecy, and survival shape the fate of the universe.",
-            "assets/images/dune.jpg",
-          ),
-        ],
-      ),
+        if (books.isEmpty) {
+          return const Column(
+            //mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [Text("No books yet!", style: TextStyle(fontSize: 18))],
+          );
+        }
+
+        return ListView.builder(
+          physics: Mycustomphysics(),
+          padding: const EdgeInsets.only(bottom: 66),
+          itemCount: books.length,
+          itemBuilder: (context, index) {
+            return _shelfCard(books[index]);
+          },
+        );
+      },
     );
   }
 }

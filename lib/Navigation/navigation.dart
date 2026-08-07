@@ -85,6 +85,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
       ProfileScreen(),
     ];
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       extendBody: true,
       body: SafeArea(
         top: false,

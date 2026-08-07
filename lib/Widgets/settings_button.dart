@@ -1,11 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bookbee/screens/Settings/setting.dart';
 
-class GlassBackButton extends StatelessWidget {
+class GlassSettingsButton extends StatelessWidget {
   final VoidCallback? onPressed;
 
-  const GlassBackButton({super.key, this.onPressed});
+  const GlassSettingsButton({super.key, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +34,13 @@ class GlassBackButton extends StatelessWidget {
             ],
           ),
           child: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios_new,
-              color: Colors.black87,
-              size: 24,
-            ),
-            onPressed: onPressed ?? () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingScreen()),
+              );
+            },
+            icon: const Icon(Icons.settings, size: 32, color: Colors.black87),
           ),
         ),
       ),

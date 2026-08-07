@@ -13,4 +13,8 @@ class UserService {
 
     return UserModel.fromMap(doc.id, doc.data()!);
   }
+
+  Future<void> createUser(UserModel user) async {
+    await _firestore.collection('users').doc(user.uid).set(user.toMap());
+  }
 }

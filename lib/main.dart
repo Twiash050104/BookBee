@@ -6,6 +6,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'auth/auth_wrapper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'Services/auth_service.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +26,10 @@ void main() async {
   await dotenv.load(fileName: ".env");
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  //await AuthService().initialize();
+
+  await Hive.initFlutter();
+  await Hive.openBox('coverCache');
   runApp(const MyApp());
 }
 

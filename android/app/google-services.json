@@ -12,7 +12,20 @@
           "package_name": "com.bookbee.application"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "371102131768-7dv5dvi7ole0nid1j3q0nufq58hddlvq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bookbee.application",
+            "certificate_hash": "9a08788f029cb5de927eb0b124390795fa4776a9"
+          }
+        },
+        {
+          "client_id": "371102131768-2bi0qqrl5pskavbsjbadb3244dm7guf5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBDU9VftAguc2QzGlc1RzadnJ1MVbNfeTo"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "371102131768-2bi0qqrl5pskavbsjbadb3244dm7guf5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "371102131768-ke7529kqgbt5r4ec25o0g0uh385i759j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterBookbee"
+              }
+            }
+          ]
         }
       }
     }

@@ -3,6 +3,9 @@ import 'package:flutter_bookbee/auth/forgot_password_screen.dart';
 import 'package:flutter_bookbee/auth/sign_up_screen.dart';
 import '../Navigation/navigation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_bookbee/Services/auth_service.dart';
+import '../Services/auth_service.dart';
+import 'auth_wrapper.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -324,7 +327,36 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: OutlinedButton.styleFrom(
                               minimumSize: Size(180, 48),
                             ),
-                            onPressed: () {},
+                            onPressed: () async {
+                              try {
+                                final userCredential = await AuthService()
+                                    .signInWithGoogle();
+
+                                if (userCredential == null) {
+                                  return; // User cancelled sign-in
+                                }
+
+                                // AuthWrapper will automatically navigate
+                              } on FirebaseAuthException catch (e) {
+                                if (!context.mounted) return;
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      e.message ?? 'Google Sign-In failed',
+                                    ),
+                                  ),
+                                );
+                              } catch (e) {
+                                if (!context.mounted) return;
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Something went wrong.'),
+                                  ),
+                                );
+                              }
+                            },
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -361,7 +393,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => SignupScreen(),
+                                    builder: (_) => const SignupScreen(),
                                   ),
                                 );
                               },

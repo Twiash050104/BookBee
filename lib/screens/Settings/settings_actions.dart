@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bookbee/Widgets/frosted_container.dart';
+import 'package:flutter_bookbee/screens/Settings/About/about.dart';
+import 'package:flutter_bookbee/screens/Settings/Account/account.dart';
+import 'package:flutter_bookbee/screens/Settings/Account/account_header.dart';
+import 'package:flutter_bookbee/screens/Settings/ChnagePassword/chnage_password.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import '../Settings/Account/account_header.dart';
 
 class SettingsActions extends StatefulWidget {
   const SettingsActions({super.key});
@@ -92,10 +98,11 @@ class _SettingsActionsState extends State<SettingsActions> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "ACCOUNT",
+                  "Personal",
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
+                    color: Colors.black54,
                     letterSpacing: 1.2,
                   ),
                 ),
@@ -106,36 +113,113 @@ class _SettingsActionsState extends State<SettingsActions> {
                     settingTile(
                       icon: Icons.person_outline,
                       title: "Account",
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Account()),
+                        );
+                      },
                     ),
-                    const Divider(height: 1),
+
+                    Divider(height: 1, color: Colors.black12),
                     settingTile(
-                      icon: Icons.edit_outlined,
-                      title: "Edit Profile",
+                      icon: Icons.light_mode_outlined,
+                      title: "Dynamic Themes",
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text(
+                                'Dynamic Themes',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              content: Text(
+                                'Dynamic Themes are currently under development. Thank you for your patience!',
+                              ),
+                              actions: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFFE9A34),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    'OK',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                    Divider(height: 1, color: Colors.black12),
+                    settingTile(
+                      icon: Icons.flag_outlined,
+                      title: "Reading Goals",
                       onTap: () {},
                     ),
-                    const Divider(height: 1),
+                    Divider(height: 1, color: Colors.black12),
                     settingTile(
                       icon: Icons.interests_outlined,
                       title: "Reading Interests",
                       onTap: () {},
                     ),
-                    const Divider(height: 1),
+                    Divider(height: 1, color: Colors.black12),
                     settingTile(
                       icon: Icons.lock_outline,
                       title: "Change Password",
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChangePassword(),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
 
+                // const SizedBox(height: 30),
+
+                // const Text(
+                //   "PREFERENCES",
+                //   style: TextStyle(
+                //     fontSize: 14,
+                //     fontWeight: FontWeight.bold,
+                //     letterSpacing: 1.2,
+                //   ),
+                // ),
+                // const SizedBox(height: 8),
+
+                // settingsCard(
+                //   children: [
+                //     settingTile(
+                //       icon: Icons.notifications_outlined,
+                //       title: "Notifications",
+                //       onTap: () {},
+                //     ),
+                //     const Divider(height: 1),
+                //     settingTile(
+                //       icon: Icons.palette_outlined,
+                //       title: "Appearance",
+                //       onTap: () {},
+                //     ),
+                //   ],
+                // ),
                 const SizedBox(height: 30),
 
                 const Text(
-                  "PREFERENCES",
+                  "Support",
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
+                    color: Colors.black54,
                     letterSpacing: 1.2,
                   ),
                 ),
@@ -144,43 +228,33 @@ class _SettingsActionsState extends State<SettingsActions> {
                 settingsCard(
                   children: [
                     settingTile(
-                      icon: Icons.notifications_outlined,
-                      title: "Notifications",
+                      icon: Icons.menu_book_outlined,
+                      title: "Request a Book",
                       onTap: () {},
                     ),
-                    const Divider(height: 1),
+
+                    const Divider(height: 1, color: Colors.black12),
                     settingTile(
-                      icon: Icons.palette_outlined,
-                      title: "Appearance",
+                      icon: Icons.policy_outlined,
+                      title: "Privacy Policy",
                       onTap: () {},
                     ),
-                  ],
-                ),
-
-                const SizedBox(height: 30),
-
-                const Text(
-                  "SUPPORT",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 8),
-
-                settingsCard(
-                  children: [
+                    const Divider(height: 1, color: Colors.black12),
+                    settingTile(
+                      icon: Icons.bug_report_outlined,
+                      title: "Report a Bug",
+                      onTap: () {},
+                    ),
+                    const Divider(height: 1, color: Colors.black12),
                     settingTile(
                       icon: Icons.info_outline,
                       title: "About BookBee",
-                      onTap: () {},
-                    ),
-                    const Divider(height: 1),
-                    settingTile(
-                      icon: Icons.feedback_outlined,
-                      title: "Send Feedback",
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => About()),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -188,12 +262,13 @@ class _SettingsActionsState extends State<SettingsActions> {
                 const SizedBox(height: 30),
 
                 const Text(
-                  "Don't Leave Us",
+                  "Account Actions",
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
+                    color: Colors.black54,
                     letterSpacing: 1.2,
-                    color: Colors.red,
+                    // color: Colors.red,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -203,20 +278,115 @@ class _SettingsActionsState extends State<SettingsActions> {
                     settingTile(
                       icon: Icons.logout_rounded,
                       title: "Logout",
-                      onTap: () async {
-                        await FirebaseAuth.instance.signOut();
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text(
+                                'LOGOUT!',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              content: Text(
+                                'You will be logged out and will have to login again!',
+                              ),
+                              actions: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFFE9A34),
+                                  ),
+                                  onPressed: () async {
+                                    final googleSignIn = GoogleSignIn();
 
-                        if (!context.mounted) return;
-                        Navigator.pop(context);
+                                    await googleSignIn.signOut();
+                                    await FirebaseAuth.instance.signOut();
+
+                                    if (!context.mounted) return;
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    'OK',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
                     ),
-                    const Divider(height: 1),
+                    const Divider(height: 1, color: Colors.black12),
                     settingTile(
                       icon: Icons.delete_forever_rounded,
                       title: "Delete Account",
                       iconColor: Colors.red,
                       textColor: Colors.red,
-                      onTap: () {},
+                      onTap: () async {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text(
+                                "Delete Account?",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              content: Text(
+                                "You're about to permanently delete your BookBee account."
+                                " All your books, shelves, reviews, and progress will be lost forever.",
+                                style: TextStyle(),
+                                textAlign: TextAlign.center,
+                              ),
+                              actions: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: OutlinedButton(
+                                        style: OutlinedButton.styleFrom(
+                                          side: BorderSide(
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text(
+                                          "Cancel",
+                                          style: TextStyle(
+                                            color: Colors.black87,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: FilledButton(
+                                        style: FilledButton.styleFrom(
+                                          backgroundColor: Colors.red,
+                                          foregroundColor: Colors.white,
+                                        ),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text(
+                                          "DELETE",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
                     ),
                   ],
                 ),

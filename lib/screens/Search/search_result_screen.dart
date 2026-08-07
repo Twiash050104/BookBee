@@ -3,11 +3,17 @@ import 'package:flutter_bookbee/Widgets/add_button.dart';
 import 'package:flutter_bookbee/models/book.dart';
 import 'package:flutter_bookbee/services/googlebooks_services.dart';
 import 'package:flutter_bookbee/screens/BookDetail/book_details.dart';
+import 'package:flutter_bookbee/services/bookshelf_services.dart';
 import 'dart:ui';
 
 class SearchResultScreen extends StatefulWidget {
   final String query;
-  const SearchResultScreen({super.key, required this.query});
+  final bool isGenreSearch;
+  const SearchResultScreen({
+    super.key,
+    required this.query,
+    this.isGenreSearch = false,
+  });
   @override
   State<SearchResultScreen> createState() => _SearchResultState();
 }
@@ -26,7 +32,17 @@ class _SearchResultState extends State<SearchResultScreen> {
     });
 
     try {
-      books = await _service.searchBooks(query);
+      if (widget.isGenreSearch) {
+        books = await _service.getBooksByGenre(query);
+      } else {
+        books = await _service.searchBooks(query);
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+
+    try {
+      //books = await _service.searchBooks(query);
 
       books = books.where((book) {
         final title = book.title.toLowerCase();
@@ -62,6 +78,8 @@ class _SearchResultState extends State<SearchResultScreen> {
   }
 
   final GoogleBooksService _service = GoogleBooksService();
+  final BookshelfServices _bookshelfServices = BookshelfServices();
+  //final GoogleBooksService _services = GoogleBooksService();
 
   late TextEditingController searchController;
 
@@ -231,7 +249,9 @@ class _SearchResultState extends State<SearchResultScreen> {
                                   title: book.title,
                                   subtitle: book.description,
                                   author: book.author,
-                                  image: book.thumbnail,
+                                  //image: book.coverUrl,
+                                  isbn: book.isbn,
+                                  thumbnail: book.thumbnail,
                                   genres: book.genres,
                                 ),
                               ),
@@ -329,8 +349,33 @@ class _SearchResultState extends State<SearchResultScreen> {
                                             ),
                                           ),
                                           AddBookButton(
-                                            onSelected: (value) {
-                                              debugPrint(value);
+                                            onSelected: (status) async {
+                                              try {
+                                                await _bookshelfServices
+                                                    .addBook(book, status);
+
+                                                if (!context.mounted) return;
+
+                                                ScaffoldMessenger.of(
+                                                  context,
+                                                ).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      "${book.title} added to $status",
+                                                    ),
+                                                  ),
+                                                );
+                                              } catch (e) {
+                                                if (!context.mounted) return;
+
+                                                ScaffoldMessenger.of(
+                                                  context,
+                                                ).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(e.toString()),
+                                                  ),
+                                                );
+                                              }
                                             },
                                           ),
                                           //const SizedBox(height: 10),

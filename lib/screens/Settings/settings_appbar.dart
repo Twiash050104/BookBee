@@ -14,6 +14,7 @@ class SettingHeader extends StatelessWidget {
             leading: GlassBackButton(),
 
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            surfaceTintColor: Colors.transparent,
             title: Text(
               'Settings',
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),

@@ -35,7 +35,7 @@ class TopBooks extends StatelessWidget {
 
               return BookCard(
                 title: book.title,
-                coverUrl: book.thumbnail,
+                coverUrl: book.coverUrl,
                 onTap: () {
                   Navigator.push(
                     context,
@@ -44,7 +44,9 @@ class TopBooks extends StatelessWidget {
                         title: book.title,
                         subtitle: book.description,
                         author: book.author,
-                        image: book.thumbnail,
+                        //image: book.coverUrl,
+                        isbn: book.isbn,
+                        thumbnail: book.thumbnail,
                         genres: book.genres,
                       ),
                     )),

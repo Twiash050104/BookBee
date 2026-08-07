@@ -1,43 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bookbee/models/user_model.dart';
 import 'package:flutter_bookbee/Services/user_services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ShelfChips extends StatefulWidget {
-  const ShelfChips({super.key});
+class ShelfChips extends StatelessWidget {
+  final String selectedStatus;
+  final ValueChanged<String> onStatusChanged;
 
-  @override
-  State<ShelfChips> createState() => _ProfileChipsState();
-}
+  const ShelfChips({
+    super.key,
+    required this.selectedStatus,
+    required this.onStatusChanged,
+  });
 
-class _ProfileChipsState extends State<ShelfChips> {
-  UserModel? user;
-  int selectedindex = 0;
-  //bool onSelected = false;
-
-  @override
-  void initState() {
-    super.initState();
-    loadUser();
-  }
-
-  Future<void> loadUser() async {
-    final currentUser = await UserService().getCurrentUser();
-
-    setState(() {
-      user = currentUser;
-    });
-  }
-
-  Widget profilechips(
-    String name,
-    //Color textcolor,
-    int index,
-    //Color fillcolor,
-  ) {
+  Widget profilechips(BuildContext context, String name) {
     return ChoiceChip(
-      selectedColor: Color(0xFFFE9A34),
+      selectedColor: const Color(0xFFFE9A34),
       showCheckmark: false,
-      avatar: selectedindex == index
+      avatar: selectedStatus == name
           ? Container(
               width: 8,
               height: 8,
@@ -47,20 +28,17 @@ class _ProfileChipsState extends State<ShelfChips> {
               ),
             )
           : null,
-      selected: selectedindex == index,
+      selected: selectedStatus == name,
       onSelected: (_) {
-        setState(() {
-          selectedindex = index;
-        });
+        onStatusChanged(name);
       },
       label: Text(
         name,
         style: TextStyle(
-          fontWeight: selectedindex == index
+          fontWeight: selectedStatus == name
               ? FontWeight.w800
               : FontWeight.normal,
           color: Colors.black,
-          //This will break on devices with small screen chnage this in near future
           fontSize: 14,
         ),
       ),
@@ -70,41 +48,65 @@ class _ProfileChipsState extends State<ShelfChips> {
 
   @override
   Widget build(BuildContext context) {
-    if (user == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
     return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 8),
-        child: Column(
-          children: [
-            RichText(
-              text: TextSpan(
-                style: TextStyle(fontSize: 28, color: Colors.black),
-                children: [
-                  //add username value here
-                  TextSpan(
-                    text:
-                        "$user"
-                        's',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+      child: Column(
+        children: [
+          StreamBuilder<DocumentSnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .doc(FirebaseAuth.instance.currentUser!.uid)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const CircularProgressIndicator();
+              }
+
+              final data = snapshot.data!.data() as Map<String, dynamic>;
+
+              final fullName = data['name'] ?? "";
+              final firstName = fullName.toString().split(' ').first;
+
+              return Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: RichText(
+                  overflow: TextOverflow.ellipsis,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: firstName,
+                        style: const TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w600,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 26,
+                        ),
+                      ),
+                      const TextSpan(
+                        text: "'s Shelf",
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 26,
+                        ),
+                      ),
+                    ],
                   ),
-                  TextSpan(text: ' Shelf'),
-                ],
-              ),
-            ),
-            SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                profilechips('Reading', 0),
-                profilechips('Completed', 1),
-                profilechips('To Read', 2),
-                profilechips('Dropped', 3),
-              ],
-            ),
-          ],
-        ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              profilechips(context, 'Reading'),
+              profilechips(context, 'Completed'),
+              profilechips(context, 'To Read'),
+              profilechips(context, 'Dropped'),
+            ],
+          ),
+          const SizedBox(height: 4),
+        ],
       ),
     );
   }

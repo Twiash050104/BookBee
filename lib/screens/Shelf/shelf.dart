@@ -13,6 +13,8 @@ class ShelfScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ShelfScreen> {
+  String selectedStatus = "Reading";
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -20,16 +22,20 @@ class _ProfileScreenState extends State<ShelfScreen> {
         Expanded(
           child: SafeArea(
             top: false,
-            child: const Column(
+            child: Column(
               children: [
-                ShelfChips(),
+                ShelfChips(
+                  selectedStatus: selectedStatus,
+                  onStatusChanged: (status) {
+                    setState(() {
+                      selectedStatus = status;
+                    });
+                  },
+                ),
                 Expanded(
-                  child: SingleChildScrollView(
-                    physics: Mycustomphysics(),
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 68),
-                      child: ShelfCategories(),
-                    ),
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 1),
+                    child: ShelfCategories(status: selectedStatus),
                   ),
                 ),
               ],

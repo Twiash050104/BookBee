@@ -3,8 +3,9 @@ import 'package:palette_generator_plus/palette_generator_plus.dart';
 
 class PaletteColor extends StatefulWidget {
   final String imagePath;
+  final String? isbn;
 
-  const PaletteColor({super.key, required this.imagePath});
+  const PaletteColor({super.key, required this.imagePath, required this.isbn});
 
   @override
   State<PaletteColor> createState() => _PaletteColorState();
@@ -20,18 +21,22 @@ class _PaletteColorState extends State<PaletteColor> {
   }
 
   Future<void> _generatePalette() async {
-    final palette = await PaletteGenerator.fromImageProvider(
-      NetworkImage(widget.imagePath),
-    );
+    try {
+      final palette = await PaletteGenerator.fromImageProvider(
+        NetworkImage(widget.imagePath),
+      );
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    setState(() {
-      dominantColor =
-          palette.dominantColor?.color ??
-          palette.vibrantColor?.color ??
-          const Color(0xFFFFFBEC);
-    });
+      setState(() {
+        dominantColor =
+            palette.dominantColor?.color ??
+            palette.vibrantColor?.color ??
+            const Color(0xFFFFFBEC);
+      });
+    } catch (e) {
+      debugPrint("Palette Error: $e");
+    }
   }
 
   @override

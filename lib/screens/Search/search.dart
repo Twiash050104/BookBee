@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bookbee/screens/BookDetail/book_details.dart';
 import '../../Widgets/stretch_physics.dart';
 import '../Search/search_result_screen.dart';
+import '';
 // import 'package:flutter_bookbee/models/book.dart';
 // import '../BookDetail/genre_chips.dart';
 
@@ -16,43 +17,47 @@ class LocalBook {
   final String title;
   final String author;
   final String image;
+  final String thumbnail;
   final String subtitle;
+  final String? isbn;
 
   const LocalBook({
     required this.title,
     required this.author,
     required this.image,
+    required this.thumbnail,
     required this.subtitle,
+    required this.isbn,
   });
 }
 
 class _SearchScreenState extends State<SearchScreen> {
   final List<LocalBook> books = [
-    LocalBook(
-      title: "Harry Potter",
-      author: "J.K. Rowling",
-      image: "assets/images/harrypotter.jpg",
-      subtitle:
-          "A young wizard discovers his magical destiny and faces the dark wizard who killed his parents.",
-    ),
-    LocalBook(
-      title: "The Hobbit",
-      author: "J.R.R. Tolkien",
-      image: "assets/images/thehobbit.jpg",
-      subtitle: "",
-    ),
-    LocalBook(
-      title: "Dune",
-      author: "Frank Herbert",
-      image: "assets/images/dune.jpg",
-      subtitle: "",
-    ),
-    LocalBook(
-      title: "The Alchemist",
-      author: "Paulo Coelho",
-      image: "assets/images/thealchemist.jpg",
-      subtitle: "",
-    ),
+    // LocalBook(
+    //   title: "Harry Potter",
+    //   author: "J.K. Rowling",
+    //   image: "assets/images/harrypotter.jpg",
+    //   subtitle:
+    //       "A young wizard discovers his magical destiny and faces the dark wizard who killed his parents.",
+    // ),
+    // LocalBook(
+    //   title: "The Hobbit",
+    //   author: "J.R.R. Tolkien",
+    //   image: "assets/images/thehobbit.jpg",
+    //   subtitle: "",
+    // ),
+    // LocalBook(
+    //   title: "Dune",
+    //   author: "Frank Herbert",
+    //   image: "assets/images/dune.jpg",
+    //   subtitle: "",
+    // ),
+    // LocalBook(
+    //   title: "The Alchemist",
+    //   author: "Paulo Coelho",
+    //   image: "assets/images/thealchemist.jpg",
+    //   subtitle: "",
+    // ),
   ];
   TextEditingController search = TextEditingController();
 
@@ -145,6 +150,17 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
           ),
+
+          Padding(
+            padding: const EdgeInsets.only(left: 12, bottom: 2),
+            child: Align(
+              alignment: AlignmentGeometry.topStart,
+              child: Text(
+                'All Genres',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
           Expanded(
             child: SingleChildScrollView(
               physics: const Mycustomphysics(
@@ -152,142 +168,6 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 12, bottom: 2, top: 6),
-                    child: Align(
-                      alignment: AlignmentGeometry.topLeft,
-                      child: Text(
-                        'Your Vibe',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 2, 8, 6),
-                    child: Container(
-                      height: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        color: Colors.orange.shade100,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: books.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: SizedBox(
-                                  width: 120,
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              BookDetailsScreen(
-                                                title: books[index].title,
-                                                subtitle: books[index].subtitle,
-                                                author: books[index].author,
-                                                image: books[index].image,
-                                                genres: [],
-                                              ),
-                                        ),
-                                      );
-                                    },
-                                    child: Image.asset(
-                                      books[index].image,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(
-                  //     left: 8,
-                  //     right: 8,
-                  //     top: 4,
-                  //     bottom: 4,
-                  //   ),
-                  //   child: Divider(),
-                  //),
-                  //SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 12, bottom: 2, top: 8),
-                    child: Align(
-                      alignment: AlignmentGeometry.topLeft,
-                      child: Text(
-                        'Something New',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-                    child: Container(
-                      width: double.infinity,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        color: Colors.orange.shade100,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: books.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: SizedBox(
-                                  width: 120,
-                                  child: Image.asset(
-                                    books[index].image,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 12,
-                      top: 12,
-                      bottom: 2,
-                    ),
-                    child: Align(
-                      alignment: AlignmentGeometry.topStart,
-                      child: Text(
-                        'All Genres',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-
                   Padding(
                     padding: EdgeInsets.only(
                       bottom: MediaQuery.of(context).padding.bottom + 66,

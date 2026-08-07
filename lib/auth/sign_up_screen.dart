@@ -3,6 +3,8 @@ import '../Navigation/navigation.dart';
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../Services/auth_service.dart';
+import 'auth_wrapper.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -377,6 +379,11 @@ class _LoginScreenState extends State<SignupScreen> {
                                           password: password.text.trim(),
                                         );
 
+                                await userCredential.user!.updateDisplayName(
+                                  name.text.trim(),
+                                );
+                                await userCredential.user!.reload();
+
                                 await FirebaseFirestore.instance
                                     .collection('users')
                                     .doc(userCredential.user!.uid)
@@ -388,13 +395,13 @@ class _LoginScreenState extends State<SignupScreen> {
 
                                 if (!context.mounted) return;
 
-                                // Navigator.pushReplacement(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) =>
-                                //         const NavigationScreen(),
-                                //   ),
-                                // );
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const NavigationScreen(),
+                                  ),
+                                );
                               } catch (e) {
                                 print(e);
                               }
@@ -427,7 +434,45 @@ class _LoginScreenState extends State<SignupScreen> {
                             style: OutlinedButton.styleFrom(
                               minimumSize: Size(180, 48),
                             ),
-                            onPressed: () {},
+                            onPressed: () async {
+                              try {
+                                final userCredential = await AuthService()
+                                    .signInWithGoogle();
+                                if (!context.mounted) return;
+
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const AuthWrapper(),
+                                  ),
+                                  (route) => false,
+                                );
+
+                                if (userCredential == null) {
+                                  return;
+                                }
+
+                                // AuthWrapper will automatically navigate
+                              } on FirebaseAuthException catch (e) {
+                                if (!context.mounted) return;
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      e.message ?? 'Google Sign-In failed',
+                                    ),
+                                  ),
+                                );
+                              } catch (e) {
+                                if (!context.mounted) return;
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Something went wrong.'),
+                                  ),
+                                );
+                              }
+                            },
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [

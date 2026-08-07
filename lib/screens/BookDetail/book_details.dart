@@ -3,12 +3,15 @@ import 'package:flutter_bookbee/Widgets/glassback_button.dart';
 import 'package:flutter_bookbee/Widgets/stretch_physics.dart';
 import 'package:flutter_bookbee/screens/BookDetail/book_palette.dart';
 import 'package:flutter_bookbee/screens/BookDetail/genre_chips.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_bookbee/models/book.dart';
 
 class BookDetailsScreen extends StatefulWidget {
   final String title;
   final String subtitle;
   final String author;
-  final String image;
+  final String? isbn;
+  final String thumbnail;
   final List<String> genres;
 
   const BookDetailsScreen({
@@ -16,7 +19,8 @@ class BookDetailsScreen extends StatefulWidget {
     required this.title,
     required this.subtitle,
     required this.author,
-    required this.image,
+    required this.isbn,
+    required this.thumbnail,
     required this.genres,
   });
 
@@ -46,7 +50,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
           Stack(
             children: [
-              PaletteColor(imagePath: widget.image),
+              PaletteColor(imagePath: widget.thumbnail, isbn: widget.isbn),
               SafeArea(
                 top: false,
                 child: SingleChildScrollView(
@@ -57,7 +61,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                         height: MediaQuery.of(context).size.height * .55,
                         child: Center(
                           child: Hero(
-                            tag: widget.image,
+                            tag: widget.thumbnail,
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(24),
@@ -71,26 +75,77 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(24),
-                                child: Image.network(
-                                  widget.image,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.5,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.35,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container(
+
+                                child: Builder(
+                                  builder: (context) {
+                                    debugPrint("TITLE: ${widget.title}");
+                                    //debugPrint("Cover URL: ${widget.image}");
+                                    debugPrint(
+                                      "Thumbnail URL: ${widget.thumbnail}",
+                                    );
+                                    return CachedNetworkImage(
+                                      imageUrl: widget.thumbnail,
                                       width:
                                           MediaQuery.of(context).size.width *
                                           0.5,
                                       height:
                                           MediaQuery.of(context).size.height *
                                           0.35,
-                                      color: Colors.grey.shade300,
-                                      child: const Icon(
-                                        Icons.menu_book,
-                                        size: 60,
+                                      fit: BoxFit.cover,
+
+                                      placeholder: (context, url) => Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                            0.5,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                            0.35,
+                                        color: Colors.grey.shade300,
                                       ),
+
+                                      errorWidget: (context, url, error) {
+                                        return CachedNetworkImage(
+                                          imageUrl: widget.thumbnail,
+                                          width:
+                                              MediaQuery.of(
+                                                context,
+                                              ).size.width *
+                                              0.5,
+                                          height:
+                                              MediaQuery.of(
+                                                context,
+                                              ).size.height *
+                                              0.35,
+                                          fit: BoxFit.cover,
+
+                                          placeholder: (context, url) =>
+                                              Container(
+                                                color: Colors.grey.shade300,
+                                              ),
+
+                                          errorWidget: (context, url, error) {
+                                            return Container(
+                                              width:
+                                                  MediaQuery.of(
+                                                    context,
+                                                  ).size.width *
+                                                  0.5,
+                                              height:
+                                                  MediaQuery.of(
+                                                    context,
+                                                  ).size.height *
+                                                  0.35,
+                                              color: Colors.grey.shade300,
+                                              child: const Center(
+                                                child: Icon(
+                                                  Icons.menu_book,
+                                                  size: 60,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
                                     );
                                   },
                                 ),
@@ -162,6 +217,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
                               const SizedBox(height: 8),
                               Text(
+                                maxLines: 10,
+                                overflow: TextOverflow.ellipsis,
                                 widget.subtitle,
                                 style: const TextStyle(
                                   fontSize: 16,

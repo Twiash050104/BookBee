@@ -1,7 +1,8 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bookbee/screens/Settings/setting.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Usercard extends StatefulWidget {
   const Usercard({super.key});
@@ -10,6 +11,7 @@ class Usercard extends StatefulWidget {
 }
 
 class _UsercardState extends State<Usercard> {
+  final user = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -34,16 +36,25 @@ class _UsercardState extends State<Usercard> {
               child: Center(
                 child: Padding(
                   padding: EdgeInsets.only(left: 12, right: 12),
-                  child: Text(
-                    textAlign: TextAlign.center,
-                    "'"
-                    'This will be the about section of user where they can tell about themselves and many more things :)'
-                    "'",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontStyle: FontStyle.italic,
-                      color: Colors.black87,
-                    ),
+                  child: StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const CircularProgressIndicator();
+                      }
+
+                      final data =
+                          snapshot.data!.data() as Map<String, dynamic>;
+
+                      return Text(
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16),
+                        data["bio"] ?? "",
+                      );
+                    },
                   ),
                 ),
               ),
@@ -57,38 +68,6 @@ class _UsercardState extends State<Usercard> {
                 //crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      // boxShadow: [
-                      //   BoxShadow(
-                      //     blurRadius: 2,
-                      //     color: Colors.black12,
-                      //     offset: Offset(0.2, 0.3),
-                      //   ),
-                      // ],
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(color: Colors.black12),
-                      //boxShadow: [BoxShadow()],
-                    ),
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.message_rounded,
-                        // shadows: [
-                        //   Shadow(
-                        //     blurRadius: 12,
-                        //     color: Colors.black,
-                        //     offset: Offset(1, 3),
-                        //   ),
-                        // ],
-                        size: 26,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 12),
                   ClipRRect(
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -109,13 +88,30 @@ class _UsercardState extends State<Usercard> {
                             alignment: Alignment.center,
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
-                              child: Text(
-                                'This is username',
-                                overflow: TextOverflow.visible,
-                                style: TextStyle(
-                                  fontSize: 28,
-                                  color: Colors.black87,
-                                ),
+                              child: StreamBuilder<DocumentSnapshot>(
+                                stream: FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return const CircularProgressIndicator();
+                                  }
+
+                                  final data =
+                                      snapshot.data!.data()
+                                          as Map<String, dynamic>;
+
+                                  return Text(
+                                    data['name'],
+                                    style: TextStyle(
+                                      color: Colors.black87,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ),
@@ -123,64 +119,7 @@ class _UsercardState extends State<Usercard> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 12),
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(color: Colors.black12),
-                      //boxShadow: [BoxShadow()],
-                    ),
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.send_rounded,
-                        size: 26,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ),
                 ],
-              ),
-            ),
-
-            Padding(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-              child: Align(
-                alignment: Alignment.topRight,
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(50),
-                    border: Border.all(color: Colors.white.withOpacity(0.1)),
-                    //boxShadow: [BoxShadow(color: Colors.transparent)],
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SettingScreen(),
-                        ),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.settings,
-                      size: 32,
-                      color: Colors.black87,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black26,
-                          offset: Offset(0.2, 0.8),
-                          blurRadius: 10,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
               ),
             ),
           ],
